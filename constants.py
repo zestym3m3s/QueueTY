@@ -11,10 +11,10 @@ generate_tsv_file = False
 identifier_override = ""
 
 # Variables for VCONF Script
-generate_conformers_using_vconf_script = False
-max_conformers = 5
+generate_conformers_using_vconf_script = True
+max_conformers = 150
 step_sampling = False
-use_default_vconf_settings = True
+use_default_vconf_settings = False
 
 # Variables for Preparing TMoleX Files on the Remote Server
 prepare_TMoleX_files_script = False
@@ -30,12 +30,12 @@ gzip_timestamped_folder = False
 delete_temp_dir_after_transferring_to_timestamped_folder = False
 
 # Variables for Pulling Data from the Cluster
-grab_files_from_cluster_script = True
+grab_files_from_cluster_script = False
 timestamp_folder = ""
 pull_from_timestamped_folder = True
 
 # Variables for Write New INP File Script
-write_new_inp_file_script = True
+write_new_inp_file_script = False
 extract_cosmo_files_to_cosmo_folder = True
 write_inp_file = True
 
@@ -53,7 +53,7 @@ check_remote_directory_script = False
 remote_file_path = ""
 
 # Commonly Edited
-list_folder_name = 50
+list_folder_name = "40mix"
 template_name = "def2-TZVP"
 
 # Less Commonly Edited
@@ -64,16 +64,16 @@ username = "tsvick"
 password = "B0naschemistry"
 
 # One and Done
-compound_list_directory = fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING"
+compound_list_directory = fr"C:\Chemistry\Compound Lists"
 vconf_path = fr"C:\Chemistry\Vconf_v2\vconf.exe"
 remote_directory = "/home/tsvick/turbomol"
 
 # Default VConf Settings
 default_vconf_settings = {
-    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50.sdf", 
-    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50.log", 
-    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50_vconf.sdf", 
-    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50_vconf_batchfile.sdf", 
+    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.sdf", 
+    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.log", 
+    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf.sdf", 
+    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf_batchfile.sdf", 
     'FIRST_MOLECULE': 1, 
     'LAST_MOLECULE': None, 
     'SEARCH_MODE': "search", 
@@ -110,14 +110,14 @@ default_vconf_settings = {
 
 # Experimental VConf Settings
 experimental_vconf_settings = {
-    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50.sdf", 
-    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50.log", 
-    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50_vconf.sdf", 
-    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\20241010_CONFORMER_TESTING\50\VCONF_outputs\50_vconf_batchfile.sdf", 
-    'FIRST_MOLECULE': 1, 
-    'LAST_MOLECULE': None, 
+    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.sdf", 
+    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.log", 
+    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf.sdf", 
+    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf_batchfile.sdf", 
+    'FIRST_MOLECULE': 33, 
+    'LAST_MOLECULE': 33, 
     'SEARCH_MODE': "search", 
-    'NUM_STEPS': 50, 
+    'NUM_STEPS': 500, 
     'MIN_RING_SEARCH_STEPS': 50, 
     'SEARCH_WIDTH': "0.5", 
     'RANDOM_SEEDS': "0000 0000 0000 0001", 
@@ -129,10 +129,10 @@ experimental_vconf_settings = {
     'FORMAL_CHARGE': True, 
     'DO_NOT_FILTER_OUTPUT': False, 
     'KEEP_UNFILTERED_CONFORMATIONS': False, 
-    'ENERGY_CUTOFF': "1.0", 
-    'DISTANCE_TOLERANCE': "2.5", 
-    'ANGLE_TOLERANCE': "30.0", 
-    'ENERGY_TOLERANCE': "5.0", 
+    'ENERGY_CUTOFF': 15, 
+    'DISTANCE_TOLERANCE': "0.3", 
+    'ANGLE_TOLERANCE': 15, 
+    'ENERGY_TOLERANCE': 1, 
     'MAX_RING_CONFS': 5, 
     'RING_ENERGY_CUTOFF': 1, 
     'MAX_RING_ATOMS': 200, 
