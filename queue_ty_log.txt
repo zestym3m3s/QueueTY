@@ -1,0 +1,26 @@
+2024-06-27 15:18:55,468 - INFO - 3
+2024-06-27 15:18:55,969 - INFO - 2
+2024-06-27 15:18:56,470 - INFO - 1
+2024-06-27 15:18:56,970 - INFO - Launching QueueTY!
+2024-06-27 15:18:57,972 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\gzip_and_unzip.py is disabled
+2024-06-27 15:18:57,972 - INFO - Running script: C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\check_remote_directory.py
+2024-06-27 15:18:59,381 - INFO - total 128344
+2024-06-27 15:18:59,381 - INFO - -rw-rw-r--. 1 tsvick tsvick 118826134 Jun  6 17:17 20240605234800.tar.gz
+2024-06-27 15:18:59,381 - INFO - -rw-rw-r--. 1 tsvick tsvick  11654850 Jun  6 19:39 fast_test_list_2024_06_06_19_38.tar.gz
+2024-06-27 15:18:59,382 - INFO - -rw-rw-r--. 1 tsvick tsvick     43163 Jun 12 17:03 fast_test_list_2024_06_10_17_30.tar.gz
+2024-06-27 15:18:59,382 - INFO - -rw-rw-r--. 1 tsvick tsvick     56139 Jun 12 23:40 test_folder_2024_06_12_23_39.tar.gz
+2024-06-27 15:18:59,382 - INFO - -rw-rw-r--. 1 tsvick tsvick     43122 Jun 13 11:46 test_folder_2024_06_13_11_45.tar.gz
+2024-06-27 15:18:59,382 - INFO - -rw-rw-r--. 1 tsvick tsvick    779096 Jun 12 23:29 test_GUI_2024_06_12_22_08.tar.gz
+2024-06-27 15:18:59,382 - INFO - -rw-rw-r--. 1 tsvick tsvick      3367 Jun 25 21:25 water_test_2024_06_12_22_28.tar.gz
+2024-06-27 15:18:59,382 - INFO - 
+2024-06-27 15:18:59,459 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\check_remote_directory.py passed!
+2024-06-27 15:18:59,459 - INFO - Running script: C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\clean_up_molecule_list.py
+2024-06-27 15:19:01,393 - INFO - Empty TSV file generated at C:\Chemistry\Compound Lists\new_save_test\new_save_test.tsv
+2024-06-27 15:19:01,511 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\clean_up_molecule_list.py passed!
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\generate_conformers_vconf.py is disabled
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\cmdline_TMoleX_process.py is disabled
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\submit_remote_jobs_to_cluster.py is disabled
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\check_cluster_queue.py is disabled
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\grab_files_from_cluster.py is disabled
+2024-06-27 15:19:01,512 - INFO - C:\Users\trist\PycharmProjects\QueueTY_v1\venv\src\write_new_inp_file.py is disabled
+2024-06-27 15:19:01,513 - INFO - All active scripts passed!
