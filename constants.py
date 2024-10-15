@@ -12,7 +12,7 @@ identifier_override = ""
 
 # Variables for VCONF Script
 generate_conformers_using_vconf_script = True
-max_conformers = 150
+max_conformers = 1500
 step_sampling = False
 use_default_vconf_settings = False
 
@@ -129,10 +129,10 @@ experimental_vconf_settings = {
     'FORMAL_CHARGE': True, 
     'DO_NOT_FILTER_OUTPUT': False, 
     'KEEP_UNFILTERED_CONFORMATIONS': False, 
-    'ENERGY_CUTOFF': 15, 
-    'DISTANCE_TOLERANCE': "0.3", 
+    'ENERGY_CUTOFF': 5, 
+    'DISTANCE_TOLERANCE': 25, 
     'ANGLE_TOLERANCE': 15, 
-    'ENERGY_TOLERANCE': 1, 
+    'ENERGY_TOLERANCE': 3, 
     'MAX_RING_CONFS': 5, 
     'RING_ENERGY_CUTOFF': 1, 
     'MAX_RING_ATOMS': 200, 
