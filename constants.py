@@ -58,10 +58,10 @@ template_name = "def2-TZVP"
 
 # Less Commonly Edited
 temp_dir = "temp_tmole_dir"
-server = "priestley.sbu.edu"
+server = ""
 port = 22
-username = "tsvick"
-password = "B0naschemistry"
+username = ""
+password = ""
 
 # One and Done
 compound_list_directory = fr"C:\Chemistry\Compound Lists"
