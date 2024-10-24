@@ -6,13 +6,13 @@ import gui as gui_prop
 
 # Variables for Clean Up Molecule List Script
 clean_up_molecule_list_script = False
-extract_data_from_excel_list = False
-generate_tsv_file = False
-identifier_override = ""
+extract_data_from_excel_list = True
+generate_tsv_file = True
+identifier_override = "Abbreviated_QueueTY"
 
 # Variables for VCONF Script
-generate_conformers_using_vconf_script = True
-max_conformers = 1500
+generate_conformers_using_vconf_script = False
+max_conformers = 10000
 step_sampling = False
 use_default_vconf_settings = False
 
@@ -30,7 +30,7 @@ gzip_timestamped_folder = False
 delete_temp_dir_after_transferring_to_timestamped_folder = False
 
 # Variables for Pulling Data from the Cluster
-grab_files_from_cluster_script = False
+grab_files_from_cluster_script = True
 timestamp_folder = ""
 pull_from_timestamped_folder = True
 
@@ -53,7 +53,7 @@ check_remote_directory_script = False
 remote_file_path = ""
 
 # Commonly Edited
-list_folder_name = "40mix"
+list_folder_name = "PFOA_test_2"
 template_name = "def2-TZVP"
 
 # Less Commonly Edited
@@ -70,10 +70,10 @@ remote_directory = "/home/tsvick/turbomol"
 
 # Default VConf Settings
 default_vconf_settings = {
-    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.sdf", 
-    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.log", 
-    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf.sdf", 
-    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf_batchfile.sdf", 
+    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2.sdf", 
+    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2.log", 
+    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2_vconf.sdf", 
+    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2_vconf_batchfile.sdf", 
     'FIRST_MOLECULE': 1, 
     'LAST_MOLECULE': None, 
     'SEARCH_MODE': "search", 
@@ -110,17 +110,17 @@ default_vconf_settings = {
 
 # Experimental VConf Settings
 experimental_vconf_settings = {
-    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.sdf", 
-    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix.log", 
-    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf.sdf", 
-    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\40mix\VCONF_outputs\40mix_vconf_batchfile.sdf", 
-    'FIRST_MOLECULE': 33, 
-    'LAST_MOLECULE': 33, 
+    'SDF_FILENAME': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2.sdf", 
+    'OUTPUT_LOG': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2.log", 
+    'OUTPUT_SDF': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2_vconf.sdf", 
+    'vconf_batch_sdf_path': fr"C:\Chemistry\Compound Lists\PFOA_test_2\VCONF_outputs\PFOA_test_2_vconf_batchfile.sdf", 
+    'FIRST_MOLECULE': 115, 
+    'LAST_MOLECULE': 115, 
     'SEARCH_MODE': "search", 
-    'NUM_STEPS': 500, 
+    'NUM_STEPS': 10000, 
     'MIN_RING_SEARCH_STEPS': 50, 
     'SEARCH_WIDTH': "0.5", 
-    'RANDOM_SEEDS': "0000 0000 0000 0001", 
+    'RANDOM_SEEDS': "1111 1111 1111 1111", 
     'RESTRAINED_ATOMS': None, 
     'SULFONAMIDE_NITROGEN': False, 
     'DIELECTRIC_COEFFICIENT': "4.0", 
@@ -129,10 +129,10 @@ experimental_vconf_settings = {
     'FORMAL_CHARGE': True, 
     'DO_NOT_FILTER_OUTPUT': False, 
     'KEEP_UNFILTERED_CONFORMATIONS': False, 
-    'ENERGY_CUTOFF': 5, 
-    'DISTANCE_TOLERANCE': 25, 
-    'ANGLE_TOLERANCE': 15, 
-    'ENERGY_TOLERANCE': 3, 
+    'ENERGY_CUTOFF': 4, 
+    'DISTANCE_TOLERANCE': "0.25", 
+    'ANGLE_TOLERANCE': "1.25", 
+    'ENERGY_TOLERANCE': "0.125", 
     'MAX_RING_CONFS': 5, 
     'RING_ENERGY_CUTOFF': 1, 
     'MAX_RING_ATOMS': 200, 
@@ -148,7 +148,7 @@ experimental_vconf_settings = {
     'SUBSTITUENTS_LEVEL': "u", 
 }
 
-define_sh_content = """define << EOF\n\n\na coord\ndesy\nired\n*\nno\nb all def2-TZVP\n*\neht\n\n\n\nscf\niter\n200\n\ndft\non\n\nri\non\n\n*\nEOF"""
+define_sh_content = """define << EOF\n\n\na coord\ndesy\nired\n*\nno\nb all def2-TZVP\n*\neht\n\n\n\nrex\n-int\n*\n-polish\n*\n*\n*\n*\n*\n*\n*\nscf\niter\n200\n\ndft\nfunc\nb3-lyp\non\n\nri\non\n\n*\nEOF"""
 cosmoprep_sh_content = """cosmoprep << EOF\n\n\n\n\n\n\n\n\n\n\n\nr all o\n*\n\n\nEOF"""
 subscript_sh_content = """#!/bin/bash\n#\n#$ -q speedy\n#$ -cwd\n#$ -j y\n#$ -S /bin/bash\n#$ -N {mol_name}\n#$ -pe orte 10\n#$ -R y\n\n######## ENTER YOUR TURBOMOLE INSTALLATION PATH HERE ##########\nexport TURBODIR=/state/partition1/TURBOMOLE/TURBOMOLE\n###############################################################\nexport PATH=$TURBODIR/scripts:$PATH\nexport PARA_ARCH=MPI\nexport PATH=$TURBODIR/bin/`sysname`:$PATH\nexport PARNODES=10\nulimit -s unlimited\nmodule load openmpi-x86_64\npwd\njobex -c 400 -ri > job.out"""
 # Dependencies

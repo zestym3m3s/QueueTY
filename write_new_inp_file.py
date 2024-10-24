@@ -12,6 +12,7 @@ from constants import (
 )
 import constants
 import sys
+import importlib
 
 # Determine the correct path to constants.py
 if getattr(sys, 'frozen', False):  # Running as an executable

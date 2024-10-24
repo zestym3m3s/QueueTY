@@ -1,9 +1,12 @@
+import hashlib
 import os
 import paramiko
 from scp import SCPClient
 from datetime import datetime
 import importlib.util
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 # Determine the correct path to constants.py
 if getattr(sys, 'frozen', False):  # Running as an executable
@@ -31,41 +34,159 @@ grab_files_from_cluster_script = constants.grab_files_from_cluster_script
 default_vconf_settings = constants.default_vconf_settings
 use_default_vconf_settings = constants.use_default_vconf_settings
 experimental_vconf_settings = constants.experimental_vconf_settings
+only_transfer_cosmo_files = True  # New toggle for .cosmo files only
+
 
 # Define global variable
 timestamp_folder = ""
 
 
-def scp_transfer_back(ssh, remote_dir, local_dir):
+def verify_local_directory(local_dir, remote_dir, ssh):
     """
-    Transfer files back from remote to local.
+    Verify that the local directory has been successfully transferred by comparing file counts.
+    """
+    # Get file count from the remote directory
+    stdin, stdout, stderr = ssh.exec_command(f"find {remote_dir} -type f | wc -l")
+    remote_file_count = int(stdout.read().strip())
+
+    # Get file count from the local directory
+    local_file_count = sum([len(files) for r, d, files in os.walk(local_dir)])
+
+    return remote_file_count == local_file_count
+
+
+def calculate_md5(file_path):
+    """Calculate the MD5 checksum of a local file."""
+    hash_md5 = hashlib.md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
+def verify_local_file(local_file, remote_file, ssh):
+    """
+    Verify that the specific local file has been successfully transferred by comparing MD5 checksums.
+    """
+    # Calculate local MD5 checksum
+    local_md5 = calculate_md5(local_file)
+
+    # Get the remote MD5 checksum
+    stdin, stdout, stderr = ssh.exec_command(f"md5sum {remote_file}")
+    remote_md5 = stdout.read().decode().strip().split()[0]
+
+    return local_md5 == remote_md5
+
+
+def transfer_cosmo_file(cosmo_file, local_folder_path, ssh):
+    """Transfer a single .cosmo file."""
+    try:
+        # Create a new SCP client for each transfer to avoid stale connections
+        with SCPClient(ssh.get_transport()) as scp_client:
+            scp_client.get(cosmo_file, local_path=local_folder_path)
+            print(f"Transferred {cosmo_file} to {local_folder_path}")
+
+        # Verify that the .cosmo file exists locally
+        local_cosmo_file = os.path.join(local_folder_path, os.path.basename(cosmo_file))
+        if os.path.exists(local_cosmo_file):
+            print(f"Successfully verified transfer of {os.path.basename(cosmo_file)}")
+            return True
+        else:
+            print(f"Verification failed for {os.path.basename(cosmo_file)}. Retrying...")
+            with SCPClient(ssh.get_transport()) as scp_client:
+                scp_client.get(cosmo_file, local_path=local_folder_path)
+
+            # Retry verification after second attempt
+            if os.path.exists(local_cosmo_file):
+                print(f"Successfully verified transfer of {os.path.basename(cosmo_file)} on retry")
+                return True
+            else:
+                print(f"Failed to verify transfer of {os.path.basename(cosmo_file)} after retry.")
+                return False
+    except Exception as e:
+        print(f"Failed to transfer {cosmo_file}: {e}")
+        return False
+
+
+def scp_transfer_back(ssh, remote_dir, local_dir, max_workers=5):
+    """
+    Transfer files back from remote to local, utilizing multithreading for faster transfers.
+    Process 5 folders at a time to avoid overwhelming the system.
     """
     local_target_dir = os.path.join(local_dir, "TMoleX_output")
+
+    # Ensure the local target directory is cleared before starting the transfer
+    if os.path.exists(local_target_dir):
+        for root, dirs, files in os.walk(local_target_dir, topdown=False):
+            for file in files:
+                os.remove(os.path.join(root, file))
+            for dir in dirs:
+                os.rmdir(os.path.join(root, dir))
+
     os.makedirs(local_target_dir, exist_ok=True)
-    transferred = False
-    with SCPClient(ssh.get_transport()) as scp:
-        stdin, stdout, stderr = ssh.exec_command(f"ls -1 {remote_dir}")
-        folders = stdout.read().decode().split()
-        for folder in folders:
+
+    # Create all necessary folders first
+    print("Listing top-level directories to find .cosmo files...")
+    stdin, stdout, stderr = ssh.exec_command(f"ls -1 {remote_dir}")
+    stdout.channel.recv_exit_status()  # Ensure the command completes
+    folders = stdout.read().decode().split()
+
+    if not folders:
+        print("No directories found in the specified remote directory.")
+        return False
+
+    # Prepare all local folders before transfer
+    for folder in folders:
+        if folder != "run_tx.sh":
+            local_folder_path = os.path.join(local_target_dir, folder)
+            os.makedirs(local_folder_path, exist_ok=True)
+
+    # Collect tasks for concurrent execution
+    transfer_tasks = []
+
+    # Process folders in batches of 5
+    for i in range(0, len(folders), 5):
+        batch_folders = folders[i:i + 5]
+
+        for folder in batch_folders:
             if folder == "run_tx.sh":
                 print(f"Skipping {folder}")
                 continue
+
             remote_folder_path = f"{remote_dir}/{folder}"
-            try:
-                scp.get(remote_folder_path, recursive=True, local_path=local_target_dir)
-                print(f"Transferred {folder} to {local_target_dir}")
-                transferred = True
+            local_folder_path = os.path.join(local_target_dir, folder)
 
-                # Check if the transfer was successful by verifying the existence of the transferred files locally
-                if not os.path.exists(os.path.join(local_target_dir, folder)):
-                    print(f"Transfer of {folder} failed. Retrying...")
-                    scp.get(remote_folder_path, recursive=True, local_path=local_target_dir)
+            if only_transfer_cosmo_files:
+                # Only transfer .cosmo files inside each molecule's folder
+                stdin, stdout, stderr = ssh.exec_command(
+                    f"find {remote_folder_path} -maxdepth 1 -type f -name '*.cosmo'")
+                stdout.channel.recv_exit_status()  # Ensure the command completes
+                cosmo_files = stdout.read().decode().strip().split("\n")
+                if not cosmo_files or cosmo_files == ['']:
+                    print(f"No .cosmo files found in {remote_folder_path}.")
+                    continue
+                for cosmo_file in cosmo_files:
+                    if cosmo_file:
+                        # Add tasks to transfer each .cosmo file
+                        transfer_tasks.append((cosmo_file, local_folder_path))
 
-            except Exception as e:
-                print(f"Failed to transfer {folder}: {e}")
-    if not transferred:
-        print("No files were transferred. Double check your timestamp folder.")
-    return transferred
+        # Use a persistent SCPClient for multithreading
+        print(f"Processing batch of {len(batch_folders)} folders...")
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(transfer_cosmo_file, cosmo_file, local_folder_path, ssh)
+                       for cosmo_file, local_folder_path in transfer_tasks]
+
+            for future in as_completed(futures):
+                try:
+                    future.result()  # Retrieve results or catch exceptions
+                except Exception as e:
+                    print(f"An error occurred during file transfer: {e}")
+
+        # Clear tasks after each batch
+        transfer_tasks.clear()
+
+    print("Completed file transfers.")
+    return True
 
 
 def gzip_directory(ssh, directory):
@@ -81,7 +202,8 @@ def unzip_directory(ssh, tar_file):
     Unzip a tar.gz file and restore its contents to the original directory.
     """
     directory = tar_file.replace(".tar.gz", "")
-    stdin, stdout, stderr = ssh.exec_command(f"mkdir -p {directory} && tar -xzf {tar_file} -C {directory} && rm -f {tar_file}")
+    stdin, stdout, stderr = ssh.exec_command(
+        f"mkdir -p {directory} && tar -xzf {tar_file} -C {directory} && rm -f {tar_file}")
     stdout.channel.recv_exit_status()  # Wait for the command to complete
 
 
@@ -104,7 +226,8 @@ def get_most_recent_timestamped_folder(ssh, remote_directory):
     if not timestamped_folders:
         return None
 
-    most_recent_folder = max(timestamped_folders, key=lambda x: datetime.strptime("_".join(x.split('_')[-5:]), "%Y_%m_%d_%H_%M"))
+    most_recent_folder = max(timestamped_folders,
+                             key=lambda x: datetime.strptime("_".join(x.split('_')[-5:]), "%Y_%m_%d_%H_%M"))
     return most_recent_folder
 
 
