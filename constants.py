@@ -30,12 +30,12 @@ gzip_timestamped_folder = False
 delete_temp_dir_after_transferring_to_timestamped_folder = False
 
 # Variables for Pulling Data from the Cluster
-grab_files_from_cluster_script = True
+grab_files_from_cluster_script = False
 timestamp_folder = ""
 pull_from_timestamped_folder = True
 
 # Variables for Write New INP File Script
-write_new_inp_file_script = False
+write_new_inp_file_script = True
 extract_cosmo_files_to_cosmo_folder = True
 write_inp_file = True
 
