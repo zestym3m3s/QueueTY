@@ -1,0 +1,51 @@
+Task started at: 2024-11-18 13:28:35
+Task name: Template_Queue
+Task file path: C:\Users\{username}\PycharmProjects\QueueTY\saves\Template_Queue
+
+3
+2
+1
+Launching QueueTY!
+
+C:\Users\{username}\PycharmProjects\QueueTY for PYTHON
+Processing script: gzip_and_unzip.py, Active: False
+
+gzip_and_unzip.py is disabled
+
+Processing script: check_remote_directory.py, Active: False
+
+check_remote_directory.py is disabled
+
+Processing script: clean_up_molecule_list.py, Active: True
+Running script: C:\Users\{username}\PycharmProjects\QueueTY\clean_up_molecule_list.py
+Data extracted and saved to C:\Users\{username}\PycharmProjects\QueueTY_release_only\Chemistry\Compound_List\Template\Template.tsv
+////////////////////////////////////
+clean_up_molecule_list.py passed!
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Processing script: generate_conformers_vconf.py, Active: False
+
+generate_conformers_vconf.py is disabled
+
+Processing script: cmdline_TMoleX_process.py, Active: False
+
+cmdline_TMoleX_process.py is disabled
+
+Processing script: submit_remote_jobs_to_cluster.py, Active: False
+
+submit_remote_jobs_to_cluster.py is disabled
+
+Processing script: check_cluster_queue.py, Active: False
+
+check_cluster_queue.py is disabled
+
+Processing script: grab_files_from_cluster.py, Active: False
+
+grab_files_from_cluster.py is disabled
+
+Processing script: write_new_inp_file.py, Active: False
+
+write_new_inp_file.py is disabled
+
+All active scripts passed!
+Task completed in: 00:00:06
