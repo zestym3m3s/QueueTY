@@ -46,7 +46,7 @@ The GUI has 5 tabs:
 	- Editable Variables section lets you define paths to certain files and executables so the script can run properly and send files to the right places. Also includes the credentials that you can use to access the remote server saved locally.
 	- Directory Editing section allows you to view the remote server contents and dig through them, and to gzip and unzip or delete files/folders on the remote server without having to open any programs.
 
-![Alt text](.README_Images/Script Settings.png)
+![Script Settings Tab](.README_Images/Script Settings.png)
 
 
 2. Console Tab:
@@ -56,7 +56,7 @@ The GUI has 5 tabs:
 	- Use "Ctrl + F" shortcut to enable keyword search.
 	- Lets you terminate the script or the queue at any point.
 
-![Alt text](.README_Images/Console.png)
+![Console Tab](.README_Images/Console.png)
 
 
 3. VConf Settings Tab:
@@ -65,7 +65,7 @@ The GUI has 5 tabs:
 	- Has separate default settings and experimental settings so you can tinker easily.
 	- Includes tooltips that explain what each setting does in detail (taken from Vconf documentation, linked below)
 
-![Alt text](.README_Images/VConf Settings.png)
+![VConf Settings Tab](.README_Images/VConf Settings.png)
 
 
 4. File Editor Tab:
@@ -77,7 +77,7 @@ The GUI has 5 tabs:
 	    - subscript.sh  : The instructions for queueing the molecules to the SunGrid engine cluster nodes.
 	- You are able to edit all of these files if you wish, but you should refer to the turbomole user manual below.
 
-![Alt text](.README_Images/File Editor.png)
+![File Editor Tab](.README_Images/File Editor.png)
 
 
 5. Queue Tab:
@@ -88,7 +88,7 @@ The GUI has 5 tabs:
     - View the console output log file for each task after the fact, as well as how long the task took to run.
     - Resize the windows to make readability better.
 
-![Alt text](.README_Images/Queue.png)
+![Queue Tab](.README_Images/Queue.png)
 
 
 6. Terminal Tab:
@@ -109,7 +109,7 @@ The GUI has 5 tabs:
     - DO NOT use these commands:
         - vi    : You wont be able to exit the file (hotkeys dont work)
 
-![Alt text](.README_Images/Remote Server Terminal.png)
+![Remote Server Terminal Tab](.README_Images/Remote Server Terminal.png)
 
 
 7. Tutorial / Help Tab:
@@ -119,7 +119,7 @@ The GUI has 5 tabs:
     - Includes links to ALERT's and Simpson group's websites.
     - And of course I included a link to my LinkedIn if you're interested in contacting me.
 
-![Alt text](.README_Images/Help.png)
+![Tutorial Help Tab](.README_Images/Help.png)
 
 
 Other Functionalities:

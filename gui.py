@@ -2552,11 +2552,12 @@ class GUI(tk.Tk):
 
     def create_tutorial_tab(self):
         """Create the Tutorial tab with the QueueTY icon, ALERT icon, video button, LinkedIn button,
-        ALERT group link, and Simpson group link on the left (1/4), and the README.txt content on the right (3/4).
+        ALERT group link, and Simpson group link on the left (1/4), and the README.md content on the right (3/4).
         Only the text box is scrollable."""
         import webbrowser
         from PIL import Image, ImageTk
         import tkinter.font as tkFont
+        import re  # Import re module for regex operations
 
         # Create the main container frame
         self.tutorial_frame = ttk.Frame(self.tutorial_tab)
@@ -2662,19 +2663,31 @@ class GUI(tk.Tk):
         right_frame.columnconfigure(0, weight=1)
         right_frame.rowconfigure(0, weight=1)
 
-        # Read the contents of README.txt
-        readme_path = os.path.join(self.base_path, 'README.txt')
+        # Read the contents of README.md
+        readme_path = os.path.join(self.base_path, 'README.md')
         print(f"README Path: {readme_path}")  # Debugging statement
         try:
-            with open(readme_path, 'r') as file:
+            with open(readme_path, 'r', encoding='utf-8') as file:
                 readme_content = file.read()
         except Exception as e:
-            readme_content = "README.txt not found or could not be read."
-            print(f"Failed to read README.txt: {e}")  # Debugging statement
+            readme_content = "README.md not found or could not be read."
+            print(f"Failed to read README.md: {e}")  # Debugging statement
+
+        # Remove image links from the Markdown content
+        # This regex matches Markdown image syntax ![Alt Text](image_path)
+        readme_content = re.sub(r'!\[.*?\]\(.*?\)', '', readme_content)
+
+        # Optionally, you can convert Markdown to plain text
+        # For a simple approach, remove other Markdown syntax like headers and formatting
+        readme_content = re.sub(r'#+ ', '', readme_content)  # Remove Markdown headers
+        readme_content = re.sub(r'\*\*(.*?)\*\*', r'\1', readme_content)  # Bold text
+        readme_content = re.sub(r'\*(.*?)\*', r'\1', readme_content)  # Italic text
+        readme_content = re.sub(r'`(.*?)`', r'\1', readme_content)  # Inline code
+        readme_content = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', readme_content)  # Links
 
         # Define a font for the README text
         try:
-            small_font = tkFont.Font(family="Helvetica", size=10)  # Increased size for better readability
+            small_font = tkFont.Font(family="Helvetica", size=10)
         except:
             small_font = ("Helvetica", 10)
 
