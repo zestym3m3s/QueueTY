@@ -2353,35 +2353,64 @@ class GUI(tk.Tk):
 
     def start_ssh_session(self):
         """Start the SSH session and read output."""
-        import paramiko
         import time
+        import socket
+        import paramiko
+
+        # For legacy SSH servers that choke unless you allow ssh-rsa (SHA1).
+        # This mirrors: -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa
+        disabled_algorithms = {
+            # Server host-key signature algos (HostKeyAlgorithms equivalent)
+            "keys": ["rsa-sha2-256", "rsa-sha2-512"],
+            # Client public-key auth signature algos (PubkeyAcceptedAlgorithms equivalent)
+            # (Doesn't hurt even if you're using password auth; remove if you want.)
+            "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"],
+        }
 
         try:
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.ssh_client = paramiko.SSHClient()
+            self.ssh_client.load_system_host_keys()  # optional; keeps behavior closer to OpenSSH
+            self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-            ssh_client.connect(
+            self.ssh_client.connect(
                 hostname=self.ssh_server,
+                port=getattr(self, "ssh_port", 22),
                 username=self.ssh_username,
                 password=self.ssh_password,
                 look_for_keys=False,
                 allow_agent=False,
                 banner_timeout=200,
-                auth_timeout=200
+                auth_timeout=200,
+                timeout=20,  # TCP connect timeout
+                disabled_algorithms=disabled_algorithms,
             )
 
             # Open a pseudo-terminal with appropriate dimensions
-            self.ssh_channel = ssh_client.invoke_shell(term='xterm', width=80, height=24)
+            self.ssh_channel = self.ssh_client.invoke_shell(term="xterm", width=80, height=24)
             self.ssh_channel.settimeout(0.0)  # Non-blocking
 
-            # Read from the SSH channel
             while self.ssh_channel and not self.ssh_channel.closed:
                 if self.ssh_channel.recv_ready():
-                    data = self.ssh_channel.recv(1024).decode('utf-8', errors='ignore')
+                    data = self.ssh_channel.recv(4096).decode("utf-8", errors="ignore")
                     self.ssh_output_queue.put(data)
                 if not self.ssh_channel.active:
                     break
                 time.sleep(0.1)
+
+        except paramiko.ssh_exception.NoValidConnectionsError as e:
+            # This is the classic "Unable to connect to port 22" wrapper.
+            # Show underlying per-address socket errors for real diagnostics.
+            details = getattr(e, "errors", None)
+            self.ssh_output_queue.put(f"SSH connection error: {e}\nDetails: {details}\n")
+            self.ssh_channel = None
+
+        except (socket.timeout, TimeoutError) as e:
+            self.ssh_output_queue.put(f"SSH connection timeout: {e}\n")
+            self.ssh_channel = None
+
+        except paramiko.SSHException as e:
+            self.ssh_output_queue.put(f"SSH negotiation/authentication error: {e}\n")
+            self.ssh_channel = None
 
         except Exception as e:
             self.ssh_output_queue.put(f"SSH connection error: {e}\n")
